@@ -17,3 +17,7 @@ uvicorn main:app --reload --host 0.0.0.0 --port=8000
 ```
 
 접속: <http://localhost:8000/>
+
+## 작업 이력
+
+- 2024-04-08: 프로젝트 초기화
