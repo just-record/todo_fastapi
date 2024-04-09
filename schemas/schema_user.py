@@ -1,10 +1,13 @@
 from pydantic import BaseModel
 
 class UserBase(BaseModel):
-    name: str
+    username: str
+    fullname: str | None = None
+
 
 class UserCreate(UserBase):
     password: str
+
 
 class User(UserBase):
     id: int
@@ -12,3 +15,16 @@ class User(UserBase):
 
     class Config:
         orm_mode = True
+
+
+class UserInDB(User):
+    hashed_password: str
+
+
+class Token(BaseModel):
+    access_token: str
+    token_type: str
+
+
+class TokenData(BaseModel):
+    username: str | None = None        
