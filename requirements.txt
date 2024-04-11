@@ -4,3 +4,4 @@ sqlalchemy
 psycopg2
 python-multipart
 python-jose[cryptography]
+passlib[bcrypt]

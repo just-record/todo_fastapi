@@ -1,8 +1,16 @@
 from sqlalchemy.orm import Session
 from models.models import User
+from passlib.context import CryptContext
+
+
+def hash_password(password: str):
+    bcrypt_context = CryptContext(schemes=['bcrypt'], deprecated="auto")
+    return bcrypt_context.hash(password)
+
 
 def verify_password(plain_password: str, hashed_password: str):
-    return plain_password == hashed_password
+    bcrypt_context = CryptContext(schemes=['bcrypt'], deprecated="auto")
+    return bcrypt_context.verify(plain_password, hashed_password)
 
 
 def get_user(db: Session, user_id: int):
@@ -14,7 +22,8 @@ def get_user_by_name(db: Session, username: str):
 
 
 def create_user(db: Session, user: User):
-    db_user = User(username=user.username, password=user.password)
+    user.password = hash_password(user.password)
+    db_user = User(**dict(user))
     db.add(db_user)
     db.commit() 
     db.refresh(db_user)
