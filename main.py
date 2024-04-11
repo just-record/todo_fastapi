@@ -18,9 +18,10 @@ def read_root():
     return {"message": "Hello, FastAPI!"}
 
 
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
+### db/utils.py로 이동
+# def get_db():
+#     db = SessionLocal()
+#     try:
+#         yield db
+#     finally:
+#         db.close()
