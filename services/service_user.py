@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
 from models.models import User
-from passlib.context import CryptContext
+from passlib.context import CryptContext 
 
 
 def hash_password(password: str):
