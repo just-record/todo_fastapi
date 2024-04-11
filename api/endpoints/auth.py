@@ -1,24 +1,49 @@
-from contextvars import Token
+from datetime import datetime, timedelta, timezone
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordRequestForm
+from jose import jwt, JWTError
 
-from services.service_user import get_user
+from db.database import SessionLocal
+from services.service_user import get_user_by_name, verify_password
+from schemas.schema_user import Token
 
+secret_key = '1234567890'
+algorithm = 'HS256'
+
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
+
+
+# router = APIRouter(prefix="/auth")
 router = APIRouter()
 
+
+def create_access_token(data: dict, expires_delta: int = None):
+    to_encode = data.copy()
+    if expires_delta:
+        expire = datetime.now(timezone.utc) + timedelta(minutes=expires_delta)
+    else:
+        expire = datetime.now(timezone.utc) + timedelta(minutes=15)
+    to_encode.update({"exp": expire})
+    encoded_jwt = jwt.encode(to_encode, secret_key, algorithm=algorithm)
+    return encoded_jwt
+
+
 @router.post("/token", response_model=Token)
-async def login(form_data: OAuth2PasswordRequestForm = Depends()):
-    params_dict = {'username': form_data.username}
-    user = get_user(params=params_dict)
+async def login(form_data: OAuth2PasswordRequestForm = Depends(), db = Depends(get_db)):
+    user = get_user_by_name(db, form_data.username)
     if not user:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Incorrect username or password",
             headers={"WWW-Authenticate": "Bearer"},
             )
-    # user = UserInDB(**user_dict) # get_user 함수의 결과를 dict로 받았을 때
 
-    if not verify_password(form_data.password, user.hashed_password):
+    if not verify_password(form_data.password, user.password):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Incorrect username or password",
@@ -26,8 +51,6 @@ async def login(form_data: OAuth2PasswordRequestForm = Depends()):
             )
 
     access_token = create_access_token(
-        # data={"sub": user.username}
         data={"sub": user.username}
     )
-    # 'Bearer' 타입의 access_token을 반환
     return {"access_token": access_token, "token_type": "bearer"}
