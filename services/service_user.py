@@ -14,17 +14,30 @@ def verify_password(plain_password: str, hashed_password: str):
 
 
 def get_user(db: Session, user_id: int):
-    return db.query(User).filter(User.id == user_id).first()
+    try:
+        return db.query(User).filter(User.id == user_id).first()
+    except Exception as e:
+        print(f'Error: {e}')
+        raise e
 
 
 def get_user_by_name(db: Session, username: str):
-    return db.query(User).filter(User.username == username).first()
+    try:
+        return db.query(User).filter(User.username == username).first()
+    except Exception as e:
+        print(f'Error: {e}')
+        raise e
 
 
 def create_user(db: Session, user: User):
-    user.password = hash_password(user.password)
-    db_user = User(**dict(user))
-    db.add(db_user)
-    db.commit() 
-    db.refresh(db_user)
-    return db_user
+    try:
+        user.password = hash_password(user.password)
+        db_user = User(**dict(user))
+        db.add(db_user)
+        db.commit() 
+        db.refresh(db_user)
+        return db_user
+    except Exception as e:
+        db.rollback()
+        print(f'Error: {e}')
+        raise e
