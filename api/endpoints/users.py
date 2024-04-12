@@ -6,8 +6,10 @@ from db.utils import get_db
 from sqlalchemy.orm import Session
 from schemas.schema_user import User, UserCreate
 from services.service_user import get_user_by_name, create_user
+import logging
 
 
+logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/users")
 
 
@@ -20,7 +22,7 @@ def add_user(user: UserCreate, db: Annotated[Session, Depends(get_db)]):
             return Response(status_code=status.HTTP_400_BAD_REQUEST, content="User already registered")
         return create_user(db=db, user=user)
     except Exception as e:
-        print(f'Error: {e}')
+        logger.error(f'Error: {e}')
         return JSONResponse(
             content={"detail": str(e)}, 
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR
@@ -32,7 +34,7 @@ def get_me(current_user: Annotated[User, Depends(get_current_active_user)]):
     try:
         return current_user
     except Exception as e:
-        print(f'Error: {e}')
+        logger.error(f'Error: {e}')
         return JSONResponse(
             content={"detail": str(e)}, 
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR

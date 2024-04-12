@@ -1,10 +1,15 @@
 from sqlalchemy.orm import Session
 from models.models import Todo
 from schemas.schema_todo import TodoCreate
+import logging
+
+
+logger = logging.getLogger(__name__)
 
 
 def create_todo(db: Session, todo: TodoCreate) -> Todo:
     try:
+        logger.debug(f'Creating Todo: {todo}')
         db_todo = Todo(**dict(todo))
         db.add(db_todo)
         db.commit()
@@ -12,7 +17,7 @@ def create_todo(db: Session, todo: TodoCreate) -> Todo:
         return db_todo
     except Exception as e:
         db.rollback()
-        print(f'Error: {e}')
+        logger.error(f'Error: {e}')
         raise e
 
 
@@ -20,7 +25,7 @@ def get_todos(db: Session, skip: int = 0, limit: int = 100) -> list[Todo]:
     try:
         return db.query(Todo).offset(skip).limit(limit).all()
     except Exception as e:
-        print(f'Error: {e}')
+        logger.error(f'Error: {e}')
         raise e
 
 
@@ -28,7 +33,7 @@ def get_todo_by_id(db: Session, todo_id: int) -> Todo:
     try:
         return db.query(Todo).filter(Todo.id == todo_id).first()
     except Exception as e:
-        print(f'Error: {e}')
+        logger.error(f'Error: {e}')
         raise e
 
 
@@ -36,7 +41,7 @@ def get_todos_by_user(db: Session, user_id: int, skip: int = 0, limit: int = 100
     try:
         return db.query(Todo).filter(Todo.user_id == user_id).offset(skip).limit(limit).all()
     except Exception as e:
-        print(f'Error: {e}')
+        logger.error(f'Error: {e}')
         raise e
 
 
@@ -44,7 +49,7 @@ def get_todos_with_filter(db: Session, skip: int = 0, limit: int = 100, complete
     try:
         return db.query(Todo).filter(Todo.completed == completed).offset(skip).limit(limit).all()
     except Exception as e:
-        print(f'Error: {e}')
+        logger.error(f'Error: {e}')
         raise e
 
 
@@ -52,7 +57,7 @@ def get_todos_by_user_with_filter(db: Session, user_id: int, skip: int = 0, limi
     try:
         return db.query(Todo).filter(Todo.user_id == user_id, Todo.completed == completed).offset(skip).limit(limit).all()
     except Exception as e:
-        print(f'Error: {e}')
+        logger.error(f'Error: {e}')
         raise e
     
 
@@ -68,7 +73,7 @@ def update_todo(db: Session, todo_id: int, todo: TodoCreate) -> Todo:
         return db_todo
     except Exception as e:
         db.rollback()
-        print(f'Error: {e}')
+        logger.error(f'Error: {e}')
         raise e
 
 
@@ -83,7 +88,7 @@ def update_todo_status(db: Session, todo_id: int, completed: bool, user_id: int)
         return db_todo
     except Exception as e:
         db.rollback()
-        print(f'Error: {e}')
+        logger.error(f'Error: {e}')
         raise e
 
 
@@ -97,5 +102,5 @@ def delete_todo(db: Session, todo_id: int, user_id: int) -> None:
         return None
     except Exception as e:
         db.rollback()
-        print(f'Error: {e}')
+        logger.error(f'Error: {e}')
         raise e

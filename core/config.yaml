@@ -1,0 +1,21 @@
+database:
+  db_host: localhost
+  db_port: 5432
+  db_name: db01
+  db_user: user01
+  db_password: user01
+
+jwt:
+  secret_key: 1184cf8c81a173ab236d500cd2a98cf37cf2ad32d33052a523107d892dfad6a3
+  algorithm: HS256
+  ACCESS_TOKEN_EXPIRE_MINUTES: 30  
+
+logging:
+  format: '%(asctime)s - %(name)s - %(funcName)s - %(levelname)s - %(message)s'
+  timed_rotating_when: W6 # S, D, H, M, midnight, W0-W6
+  timed_rotating_interval: 2
+  timed_rotating_backup_count: 100
+  stream_handler_yn: True # True, False
+  file_handler_yn: True   # True, False
+  log_file: logs/app.log
+  log_level: logging.DEBUG # logging.DEBUG, logging.INFO, logging.WARNING, logging.ERROR, logging.CRITICAL

@@ -8,13 +8,13 @@ from models.models import User
 from services.service_user import get_user_by_name, verify_password
 from schemas.schema_user import Token, TokenData
 from sqlalchemy.orm import Session
+from core.config import Config
 
-### secret_key 생성
-# linux만: openssl rand -hex 32
-# 또는: python -c "import os; print(os.urandom(32).hex())"
-secret_key = '1184cf8c81a173ab236d500cd2a98cf37cf2ad32d33052a523107d892dfad6a3'
-algorithm = 'HS256'
-ACCESS_TOKEN_EXPIRE_MINUTES = 30
+config = Config().get_config()
+
+secret_key = config['jwt']['secret_key']
+algorithm = config['jwt']['algorithm']
+ACCESS_TOKEN_EXPIRE_MINUTES = config['jwt']['ACCESS_TOKEN_EXPIRE_MINUTES']
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 

@@ -7,8 +7,10 @@ from sqlalchemy.orm import Session
 from models.models import User
 from schemas.schema_todo import Todo, TodoCreate
 from services.service_todo import create_todo, get_todos_by_user_with_filter, update_todo, update_todo_status, delete_todo
+import logging
 
 
+logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/todos")
 
 
@@ -20,7 +22,7 @@ def add_todo(current_user: Annotated[User, Depends(get_current_active_user)],
         todo.user_id = current_user.id
         return create_todo(db=db, todo=todo)
     except Exception as e:
-        print(f'Error: {e}')
+        logger.error(f'Error: {e}')
         return JSONResponse(
             content={"detail": str(e)}, 
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR
@@ -38,7 +40,7 @@ def get_todos(current_user: Annotated[User, Depends(get_current_active_user)],
             return Response(status_code=status.HTTP_204_NO_CONTENT)
         return results
     except Exception as e:
-        print(f'Error: {e}')
+        logger.error(f'Error: {e}')
         return JSONResponse(
             content={"detail": str(e)}, 
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR
@@ -54,7 +56,7 @@ def edit_todo(current_user: Annotated[User, Depends(get_current_active_user)],
         todo.user_id = current_user.id
         return update_todo(db=db, todo_id=todo_id, todo=todo)
     except Exception as e:
-        print(f'Error: {e}')
+        logger.error(f'Error: {e}')
         return JSONResponse(
             content={"detail": str(e)}, 
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR
@@ -70,7 +72,7 @@ def edit_todo_status(current_user: Annotated[User, Depends(get_current_active_us
     try:
         return update_todo_status(db=db, todo_id=todo_id, completed=completed, user_id=current_user.id)
     except Exception as e:
-        print(f'Error: {e}')
+        logger.error(f'Error: {e}')
         return JSONResponse(
             content={"detail": str(e)}, 
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR
@@ -85,7 +87,7 @@ def remove_todo(current_user: Annotated[User, Depends(get_current_active_user)],
         delete_todo(db=db, todo_id=todo_id, user_id=current_user.id)
         return None
     except Exception as e:
-        print(f'Error: {e}')
+        logger.error(f'Error: {e}')
         return JSONResponse(
             content={"detail": str(e)}, 
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR
