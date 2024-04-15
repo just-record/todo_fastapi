@@ -18,6 +18,10 @@ uvicorn main:app --reload --host 0.0.0.0 --port=8000
 
 접속: <http://localhost:8000/>
 
+## 내용 정리
+
+<https://just-record.github.io/todo-app/todoapp-fastapi-01-joinmember/>에서 확인 하실 수 있습니다.
+
 ## branches
 
 ### 01.join_member
