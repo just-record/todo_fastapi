@@ -24,6 +24,8 @@ uvicorn main:app --reload --host 0.0.0.0 --port=8000
 
 ## branches
 
+각 개발은 단계적으로 진행하여 각각의 브랜치로 구분하여 개발합니다.
+
 ### 01.join_member
 
 DB 접속을 설정 하고 회원가입을 구현합니다.
